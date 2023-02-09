@@ -35,6 +35,80 @@ changelog:
       - '^docs:'
       - '^test:'
 
+changelog:
+  # Changelog generation implementation to use.
+  #
+  # Valid options are:
+  # - `git`: uses `git log`;
+  # - `github`: uses the compare GitHub API, appending the author login to the changelog.
+  # - `gitlab`: uses the compare GitLab API, appending the author name and email to the changelog.
+  # - `github-native`: uses the GitHub release notes generation API, disables the groups feature.
+  #
+  # Defaults to `git`.
+  use: github
+
+  # Sorts the changelog by the commit's messages.
+  # Could either be asc, desc or empty
+  # Default is empty
+  sort: asc
+
+  # Max commit hash length to use in the changelog.
+  #
+  # 0: use whatever the changelog implementation gives you
+  # -1: remove the commit hash from the changelog
+  # any other number: max length.
+  #
+  # Default: 0.
+  # Since: v1.11.2
+  abbrev: 0
+
+  # Group commits messages by given regex and title.
+  # Order value defines the order of the groups.
+  # Providing no regex means all commits will be grouped under the default group.
+  # Groups are disabled when using github-native, as it already groups things by itself.
+  # Matches are performed against strings of the form: "<abbrev-commit>[:] <title-commit>".
+  # Regex use RE2 syntax as defined here: https://github.com/google/re2/wiki/Syntax.
+  #
+  # Default is no groups.
+  groups:
+    - title: Features
+      regexp: '^.*?feat(ure)?(\([[:word:]]+\))??!?:.+$'
+      order: 0
+    - title: 'Bug fixes'
+      regexp: '^.*?bug(\([[:word:]]+\))??!?:.+$'
+      order: 1
+    - title: Others
+      order: 999
+      # A group can have subgroups.
+      # If you use this, all the commits that match the parent group will also
+      # be checked against its subgroups. If some of them matches, it'll be
+      # grouped there, otherwise they'll remain ungrouped.
+      #
+      # The title is optional - you can think of groups as a way to order
+      # commits within a group.
+      #
+      # There can only be one level of subgroups, i.e. a subgroup cannot have
+      # subgroups.
+      #
+      # This feature is only available in GoReleaser Pro.
+      #
+      # Since: v1.15.0-pro
+      subgroups:
+        - title: 'Docs'
+          regex: '^docs:.*'
+          order: 1
+        - title: 'CI'
+          regex: '^build:.*'
+          order: 2
+
+  filters:
+    # Commit messages matching the regexp listed here will be removed from
+    # the changelog
+    # Default is empty
+    exclude:
+      - '^chore:'
+      - typo
+
 # The lines beneath this are called `modelines`. See `:help modeline`
 # Feel free to remove those if you don't want/use them.
 # yaml-language-server: $schema=https://goreleaser.com/static/schema.json
