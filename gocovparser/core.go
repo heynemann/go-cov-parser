@@ -86,7 +86,7 @@ func ParseLines(coverageData []string) ([]Coverage, error) {
 			return nil, errors.Wrapf(err, "invalid number of statements: '%s'", match[statementsPosition])
 		}
 
-		isCovered := match[isCoveredPosition] == "1"
+		isCovered := match[isCoveredPosition] != "0"
 
 		coverage[pos] = Coverage{
 			Line:  line,
@@ -140,7 +140,7 @@ func parseInt(val string) (int, error) {
 }
 
 // GroupCoverage in the specified groups.
-func GroupCoverage(items []Coverage, groups []ParseGroup) (ParseGroupResult, error) {
+func GroupCoverage(items []Coverage, groups ...ParseGroup) (ParseGroupResult, error) {
 	result := map[string]map[string]float64{}
 
 	statements := map[string]map[string]int{}

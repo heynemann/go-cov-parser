@@ -3,7 +3,6 @@ package gocovparser_test
 //revive:disable:add-constant
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/heynemann/go-cov-parser/gocovparser"
@@ -11,29 +10,7 @@ import (
 )
 
 func TestCanGroupCoverageData(t *testing.T) {
-	var (
-		packageParseGroup = gocovparser.ParseGroup{
-			Name: "package",
-			KeyFunc: func(line string) string {
-				line = strings.ReplaceAll(line, repoName+"/", "")
-				parts := strings.Split(line, "/")
-
-				return strings.Join(parts[:len(parts)-1], "/")
-			},
-		}
-		fileParseGroup = gocovparser.ParseGroup{
-			Name: "file",
-			KeyFunc: func(line string) string {
-				line = strings.ReplaceAll(line, repoName+"/", "")
-
-				return strings.ReplaceAll(strings.Split(line, ":")[0], "github.com/heynemann/gocovparser", "")
-			},
-		}
-		totalParseGroup = gocovparser.ParseGroup{
-			Name:    "total",
-			KeyFunc: func(line string) string { return "total" },
-		}
-
+	const (
 		expectedCov = 0.8823529411764706
 	)
 
@@ -52,23 +29,65 @@ func TestCanGroupCoverageData(t *testing.T) {
 			name: "Can parse coverage data by package, file and total",
 			args: args{
 				coverageData: CoverageFixture(t),
-				groups:       []gocovparser.ParseGroup{packageParseGroup, fileParseGroup, totalParseGroup},
+				groups: []gocovparser.ParseGroup{
+					gocovparser.PackageParseGroup,
+					gocovparser.FileParseGroup,
+					gocovparser.TotalParseGroup,
+				},
 			},
 			expectedErr: nil,
 			expectedData: func(t *testing.T, result gocovparser.ParseGroupResult) {
 				t.Helper()
 
 				assert.Contains(t, result, "package")
-				assert.Contains(t, result["package"], "gocovparser")
-				assert.EqualValues(t, result["package"]["gocovparser"], expectedCov)
+				assert.Contains(t, result["package"], "github.com/heynemann/go-cov-parser/gocovparser")
+				assert.EqualValues(t, result["package"]["github.com/heynemann/go-cov-parser/gocovparser"], expectedCov)
 
 				assert.Contains(t, result, "file")
-				assert.Contains(t, result["file"], "gocovparser/core.go")
-				assert.EqualValues(t, result["file"]["gocovparser/core.go"], expectedCov)
+				assert.Contains(t, result["file"], "github.com/heynemann/go-cov-parser/gocovparser/core.go")
+				assert.EqualValues(t, result["file"]["github.com/heynemann/go-cov-parser/gocovparser/core.go"], expectedCov)
 
 				assert.Contains(t, result, "total")
 				assert.Contains(t, result["total"], "total")
-				assert.EqualValues(t, result["total"]["total"], expectedCov)
+				assert.EqualValues(
+					t,
+					expectedCov,
+					result["total"]["total"],
+					result,
+				)
+			},
+		},
+
+		{
+			name: "Can parse coverage data by package, file and total for another coverage file format",
+			args: args{
+				coverageData: CoverageFixture2(t),
+				groups: []gocovparser.ParseGroup{
+					gocovparser.PackageParseGroup,
+					gocovparser.FileParseGroup,
+					gocovparser.TotalParseGroup,
+				},
+			},
+			expectedErr: nil,
+			expectedData: func(t *testing.T, result gocovparser.ParseGroupResult) {
+				t.Helper()
+
+				assert.Contains(t, result, "package")
+				assert.Contains(t, result["package"], "github.cbhq.net/engineering/mongofle")
+				assert.EqualValues(t, 0.6918604651162791, result["package"]["github.cbhq.net/engineering/mongofle"], result)
+
+				assert.Contains(t, result, "file")
+				assert.Contains(t, result["file"], "github.cbhq.net/engineering/mongofle/mongo_encrypter.go")
+				assert.EqualValues(
+					t,
+					0.8282208588957055,
+					result["file"]["github.cbhq.net/engineering/mongofle/mongo_encrypter.go"],
+					result,
+				)
+
+				assert.Contains(t, result, "total")
+				assert.Contains(t, result["total"], "total")
+				assert.EqualValues(t, 0.6918604651162791, result["total"]["total"], result)
 			},
 		},
 	}
@@ -82,7 +101,7 @@ func TestCanGroupCoverageData(t *testing.T) {
 			}
 
 			// ACT
-			got, err := gocovparser.GroupCoverage(items, testcase.args.groups)
+			got, err := gocovparser.GroupCoverage(items, testcase.args.groups...)
 
 			// ASSERT
 			if testcase.expectedErr != nil {
