@@ -12,6 +12,11 @@ type ParseGroup struct {
 // ParseGroupResult represents results of a Group Coverage operation.
 type ParseGroupResult map[string]map[string]float64
 
+// Filter interface for filtering coverage by.
+type Filter interface {
+	FilterCoverage(Coverage) bool
+}
+
 // Coverage line in a coverage.out file.
 type Coverage struct {
 	Line       string
