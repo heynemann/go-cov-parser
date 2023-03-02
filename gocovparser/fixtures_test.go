@@ -1,6 +1,11 @@
 package gocovparser_test
 
-import "testing"
+import (
+	"os"
+	"testing"
+
+	"github.com/stretchr/testify/require"
+)
 
 const repoName = "github.com/heynemann/go-cov-parser"
 
@@ -299,4 +304,22 @@ github.cbhq.net/engineering/mongofle/mongo_encrypter.go:402.32,403.67 1 6
 github.cbhq.net/engineering/mongofle/mongo_encrypter.go:403.67,410.20 1 6
 github.cbhq.net/engineering/mongofle/mongo_encrypter.go:410.20,412.7 1 0
 `
+}
+
+func CoverageFixture3(t *testing.T) string {
+	t.Helper()
+
+	contents, err := os.ReadFile("./coverage-fixture1.out")
+	require.NoError(t, err)
+
+	return string(contents)
+}
+
+func CoverageFixture4(t *testing.T) string {
+	t.Helper()
+
+	contents, err := os.ReadFile("./coverage-fixture2.out")
+	require.NoError(t, err)
+
+	return string(contents)
 }
