@@ -59,6 +59,38 @@ func TestCanGroupCoverageData(t *testing.T) {
 		},
 
 		{
+			name: "Can parse coverage data by package, file and total for file without repo",
+			args: args{
+				coverageData: CoverageFixture5(t),
+				groups: []gocovparser.ParseGroup{
+					gocovparser.PackageParseGroup,
+					gocovparser.FileParseGroup,
+					gocovparser.TotalParseGroup,
+				},
+			},
+			expectedErr: nil,
+			expectedData: func(t *testing.T, result gocovparser.ParseGroupResult) {
+				t.Helper()
+
+				assert.Contains(t, result, "package")
+				assert.Contains(t, result["package"], "go.uber.org/zap")
+				assert.EqualValues(t, 1, result["package"]["go.uber.org/zap"])
+
+				assert.Contains(t, result, "file")
+				assert.Contains(t, result["file"], "go.uber.org/zap/writer.go")
+				assert.EqualValues(t, 1, result["file"]["go.uber.org/zap/writer.go"])
+
+				assert.Contains(t, result, "total")
+				assert.Contains(t, result["total"], "total")
+				assert.EqualValues(
+					t,
+					1,
+					result["total"]["total"],
+				)
+			},
+		},
+
+		{
 			name: "Can parse coverage data by package, file and total for another coverage file format",
 			args: args{
 				coverageData: CoverageFixture2(t),
