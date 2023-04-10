@@ -12,3 +12,4 @@
 # vendor/
 
 dist/
+coverage.out
