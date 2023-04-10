@@ -323,3 +323,13 @@ func CoverageFixture4(t *testing.T) string {
 
 	return string(contents)
 }
+
+// CoverageFixture4 is a mock coverage.out contents.
+func CoverageFixture5(t *testing.T) string {
+	t.Helper()
+
+	return `
+mode: set
+go.uber.org/zap/writer.go:50.65,52.16 2 1
+`
+}

@@ -26,7 +26,7 @@ const (
 var parseLineRegex = regexp.MustCompile(
 	`(?P<host>[^\/]*)\/` + // github.com
 		`(?P<owner>[^\/]*)\/` + // heynemann
-		`(?P<repo>[^\/]*)\/` + // gocovparser
+		`(?:(?P<repo>[^\/]*)\/)?` + // gocovparser
 		`(?P<path>.*)\:` + // gocovparser/core.go
 		`(?P<lineno1>\d+)[.](?P<column1>\d+)\,` + // 10.73
 		`(?P<lineno2>\d+)[.](?P<column2>\d+)\s` + // 14.2
