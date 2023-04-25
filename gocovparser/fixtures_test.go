@@ -333,3 +333,11 @@ mode: set
 go.uber.org/zap/writer.go:50.65,52.16 2 1
 `
 }
+
+func EmptyFixture(t *testing.T) string {
+	t.Helper()
+
+	return `
+mode: set
+`
+}

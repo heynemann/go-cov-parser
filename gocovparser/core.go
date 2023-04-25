@@ -45,7 +45,7 @@ func Parse(coverageData string) ([]Coverage, error) {
 func ParseLines(coverageData []string) ([]Coverage, error) {
 	data := filterEmpty(coverageData)
 	if len(data) == 0 {
-		return nil, errors.Wrap(ErrInvalidCoverageData, "empty coverage data")
+		return []Coverage{}, nil
 	}
 
 	coverage := make([]Coverage, len(data))

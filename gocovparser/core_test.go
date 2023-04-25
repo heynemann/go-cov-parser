@@ -176,11 +176,16 @@ func TestCanParseCoverageData(t *testing.T) {
 			},
 		},
 		{
-			name: "Fail if empty data",
+			name: "Can parse coverage data by package, file and total if coverage is empty",
 			args: args{
-				coverageData: "",
+				coverageData: EmptyFixture(t),
 			},
-			expectedErr: gocovparser.ErrInvalidCoverageData,
+			expectedErr: nil,
+			expectedData: func(t *testing.T, result []gocovparser.Coverage) {
+				t.Helper()
+
+				assert.Len(t, result, 0)
+			},
 		},
 		{
 			name: "Fail if invalid coverage line",
