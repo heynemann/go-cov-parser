@@ -334,6 +334,15 @@ go.uber.org/zap/writer.go:50.65,52.16 2 1
 `
 }
 
+func CoverageFixture6(t *testing.T) string {
+	t.Helper()
+
+	contents, err := os.ReadFile("./coverage-fixture3.out")
+	require.NoError(t, err)
+
+	return string(contents)
+}
+
 func EmptyFixture(t *testing.T) string {
 	t.Helper()
 

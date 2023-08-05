@@ -5,6 +5,7 @@ go 1.19
 require (
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.8.1
+	golang.org/x/tools v0.11.1
 )
 
 require (
@@ -14,6 +15,6 @@ require (
 )
 
 retract (
-    v0.3.0 // Version with problems.
-    v0.3.4 // Contains retractions only.
+	v0.3.4 // Contains retractions only.
+	v0.3.0 // Version with problems.
 )
