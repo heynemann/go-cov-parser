@@ -9,18 +9,10 @@ import (
 )
 
 const (
-	hostPosition       = 1
-	ownerPosition      = 2
-	repoPosition       = 3
-	pathPosition       = 4
-	lineno1Position    = 5
-	column1Position    = 6
-	lineno2Position    = 7
-	column2Position    = 8
-	statementsPosition = 9
-	isCoveredPosition  = 10
-	int64Bits          = 64
-	intBase            = 10
+	hostPosition  = 1
+	ownerPosition = 2
+	repoPosition  = 3
+	pathPosition  = 4
 )
 
 var parseLineRegex = regexp.MustCompile(
@@ -38,6 +30,10 @@ func Parse(coverageData string) ([]Coverage, error) {
 	profiles, err := cover.ParseProfilesFromReader(strings.NewReader(coverageData))
 	if err != nil {
 		return nil, errors.Wrapf(ErrInvalidCoverageData, err.Error())
+	}
+
+	if len(profiles) == 0 {
+		return nil, nil
 	}
 
 	coverage := make([]Coverage, 0, len(profiles))

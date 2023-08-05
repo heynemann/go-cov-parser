@@ -7,8 +7,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-const repoName = "github.com/heynemann/go-cov-parser"
-
 // CoverageFixture is a mock coverage.out contents.
 func CoverageFixture(t *testing.T) string {
 	t.Helper()
