@@ -44,7 +44,8 @@ func TestFileFilter(t *testing.T) {
 	// ASSERT
 	require.NoError(t, err)
 
-	require.Len(t, got, 32)
+	require.Len(t, got, 1)
+	require.Len(t, got[0].Blocks, 32)
 }
 
 // func TestPackageParser(t *testing.T) {
