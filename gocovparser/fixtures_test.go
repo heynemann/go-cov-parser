@@ -341,6 +341,15 @@ func CoverageFixture6(t *testing.T) string {
 	return string(contents)
 }
 
+func CoverageFixture7(t *testing.T) string {
+	t.Helper()
+
+	contents, err := os.ReadFile("./coverage-fixture4.out")
+	require.NoError(t, err)
+
+	return string(contents)
+}
+
 func EmptyFixture(t *testing.T) string {
 	t.Helper()
 

@@ -33,15 +33,15 @@ func Parse(coverageData string) ([]Coverage, error) {
 	}
 
 	if len(profiles) == 0 {
-		return nil, nil
+		return []Coverage{}, nil
 	}
 
 	coverage := make([]Coverage, 0, len(profiles))
 
-	for _, p := range profiles {
-		match := parseLineRegex.FindStringSubmatch(p.FileName)
+	for _, profile := range profiles {
+		match := parseLineRegex.FindStringSubmatch(profile.FileName)
 		if len(match) == 0 {
-			return nil, errors.Wrapf(ErrInvalidCoverageData, "invalid coverage file name %q", p.FileName)
+			return nil, errors.Wrapf(ErrInvalidCoverageData, "invalid coverage file name %q", profile.FileName)
 		}
 
 		host := match[hostPosition]
@@ -50,12 +50,12 @@ func Parse(coverageData string) ([]Coverage, error) {
 		path := match[pathPosition]
 
 		coverage = append(coverage, Coverage{
-			FileName: p.FileName,
+			FileName: profile.FileName,
 			Host:     host,
 			Owner:    owner,
 			Repo:     repo,
 			Path:     path,
-			Blocks:   p.Blocks,
+			Blocks:   profile.Blocks,
 		})
 	}
 
@@ -87,6 +87,7 @@ func GroupCoverage(items []Coverage, groups ...ParseGroup) (ParseGroupResult, er
 
 			for _, b := range cov.Blocks {
 				statements[group.Name][key] += b.NumStmt
+
 				if b.Count > 0 { // is covered
 					covered[group.Name][key] += b.NumStmt
 				}

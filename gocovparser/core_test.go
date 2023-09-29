@@ -124,6 +124,31 @@ func TestCanGroupCoverageData(t *testing.T) {
 		},
 
 		{
+			name: "Can parse coverage data by package, file and total for another fixture type",
+			args: args{
+				coverageData: CoverageFixture7(t),
+				groups: []gocovparser.ParseGroup{
+					gocovparser.PackageParseGroup,
+					gocovparser.FileParseGroup,
+					gocovparser.TotalParseGroup,
+				},
+			},
+			expectedErr: nil,
+			expectedData: func(t *testing.T, result gocovparser.ParseGroupResult) {
+				t.Helper()
+
+				pkg := "github.cbhq.net/risk/data-tracker-backend/internal/serde"
+				assert.Contains(t, result, "package")
+				assert.Contains(t, result["package"], pkg)
+				assert.EqualValues(t, 0.9545454545454546, result["package"][pkg], result)
+
+				assert.Contains(t, result, "total")
+				assert.Contains(t, result["total"], "total")
+				assert.EqualValues(t, 0.7737819025522041, result["total"]["total"], result)
+			},
+		},
+
+		{
 			name: "Can parse coverage data by package, file in atomic mode",
 			args: args{
 				coverageData: CoverageFixture6(t),
@@ -158,19 +183,31 @@ func TestCanGroupCoverageData(t *testing.T) {
 				assert.EqualValues(t, 0.9, result["package"]["github.cbhq.net/some_repo/internal/middleware/revoker"])
 
 				assert.Contains(t, result["package"], "github.cbhq.net/some_repo/internal/middleware/throttler")
-				assert.EqualValues(t, 0.9333333333333333, result["package"]["github.cbhq.net/some_repo/internal/middleware/throttler"])
+				assert.EqualValues(
+					t,
+					0.9333333333333333,
+					result["package"]["github.cbhq.net/some_repo/internal/middleware/throttler"],
+				)
 
 				assert.Contains(t, result["package"], "github.cbhq.net/some_repo/internal/pkg/cache")
 				assert.EqualValues(t, 0.8055555555555556, result["package"]["github.cbhq.net/some_repo/internal/pkg/cache"])
 
 				assert.Contains(t, result["package"], "github.cbhq.net/some_repo/internal/pkg/mcencryption")
-				assert.EqualValues(t, 0.6363636363636364, result["package"]["github.cbhq.net/some_repo/internal/pkg/mcencryption"])
+				assert.EqualValues(
+					t,
+					0.6363636363636364,
+					result["package"]["github.cbhq.net/some_repo/internal/pkg/mcencryption"],
+				)
 
 				assert.Contains(t, result["package"], "github.cbhq.net/some_repo/internal/pkg/pkmanager")
 				assert.EqualValues(t, 0, result["package"]["github.cbhq.net/some_repo/internal/pkg/pkmanager"])
 
 				assert.Contains(t, result["package"], "github.cbhq.net/some_repo/internal/pkg/protojsonwrapper")
-				assert.EqualValues(t, 0.8571428571428571, result["package"]["github.cbhq.net/some_repo/internal/pkg/protojsonwrapper"])
+				assert.EqualValues(
+					t,
+					0.8571428571428571,
+					result["package"]["github.cbhq.net/some_repo/internal/pkg/protojsonwrapper"],
+				)
 
 				assert.Contains(t, result["package"], "github.cbhq.net/some_repo/internal/pkg/resources")
 				assert.EqualValues(t, 0.9647058823529412, result["package"]["github.cbhq.net/some_repo/internal/pkg/resources"])
@@ -185,13 +222,25 @@ func TestCanGroupCoverageData(t *testing.T) {
 				assert.EqualValues(t, 0.7192982456140351, result["package"]["github.cbhq.net/some_repo/internal/pkg/storage"])
 
 				assert.Contains(t, result["package"], "github.cbhq.net/some_repo/internal/pkg/storage/bsonbuilder")
-				assert.EqualValues(t, 0.9565217391304348, result["package"]["github.cbhq.net/some_repo/internal/pkg/storage/bsonbuilder"])
+				assert.EqualValues(
+					t,
+					0.9565217391304348,
+					result["package"]["github.cbhq.net/some_repo/internal/pkg/storage/bsonbuilder"],
+				)
 
 				assert.Contains(t, result["package"], "github.cbhq.net/some_repo/internal/pkg/storage/composer")
-				assert.EqualValues(t, 0.9153094462540716, result["package"]["github.cbhq.net/some_repo/internal/pkg/storage/composer"])
+				assert.EqualValues(
+					t,
+					0.9153094462540716,
+					result["package"]["github.cbhq.net/some_repo/internal/pkg/storage/composer"],
+				)
 
 				assert.Contains(t, result["package"], "github.cbhq.net/some_repo/internal/pkg/storage/mongo")
-				assert.EqualValues(t, 0.8306342780026991, result["package"]["github.cbhq.net/some_repo/internal/pkg/storage/mongo"])
+				assert.EqualValues(
+					t,
+					0.8306342780026991,
+					result["package"]["github.cbhq.net/some_repo/internal/pkg/storage/mongo"],
+				)
 
 				assert.Contains(t, result["package"], "github.cbhq.net/some_repo/internal/pkg/storage/paranoia")
 				assert.EqualValues(t, 1, result["package"]["github.cbhq.net/some_repo/internal/pkg/storage/paranoia"])
@@ -209,61 +258,129 @@ func TestCanGroupCoverageData(t *testing.T) {
 				assert.EqualValues(t, 0.824468085106383, result["package"]["github.cbhq.net/some_repo/internal/service/service1"])
 
 				assert.Contains(t, result["package"], "github.cbhq.net/some_repo/internal/service/service2")
-				assert.EqualValues(t, 0.7714285714285715, result["package"]["github.cbhq.net/some_repo/internal/service/service2"])
+				assert.EqualValues(
+					t,
+					0.7714285714285715,
+					result["package"]["github.cbhq.net/some_repo/internal/service/service2"],
+				)
 
 				assert.Contains(t, result["package"], "github.cbhq.net/some_repo/internal/service/service3")
-				assert.EqualValues(t, 0.8431372549019608, result["package"]["github.cbhq.net/some_repo/internal/service/service3"])
+				assert.EqualValues(
+					t,
+					0.8431372549019608,
+					result["package"]["github.cbhq.net/some_repo/internal/service/service3"],
+				)
 
 				assert.Contains(t, result["package"], "github.cbhq.net/some_repo/internal/service/service4")
-				assert.EqualValues(t, 0.8472222222222222, result["package"]["github.cbhq.net/some_repo/internal/service/service4"])
+				assert.EqualValues(
+					t,
+					0.8472222222222222,
+					result["package"]["github.cbhq.net/some_repo/internal/service/service4"],
+				)
 
 				assert.Contains(t, result["package"], "github.cbhq.net/some_repo/internal/service/service5")
-				assert.EqualValues(t, 0.8271028037383178, result["package"]["github.cbhq.net/some_repo/internal/service/service5"])
+				assert.EqualValues(
+					t,
+					0.8271028037383178,
+					result["package"]["github.cbhq.net/some_repo/internal/service/service5"],
+				)
 
 				assert.Contains(t, result["package"], "github.cbhq.net/some_repo/internal/service/service6")
-				assert.EqualValues(t, 0.8382352941176471, result["package"]["github.cbhq.net/some_repo/internal/service/service6"])
+				assert.EqualValues(
+					t,
+					0.8382352941176471,
+					result["package"]["github.cbhq.net/some_repo/internal/service/service6"],
+				)
 
 				assert.Contains(t, result["package"], "github.cbhq.net/some_repo/internal/service/service7")
-				assert.EqualValues(t, 0.8571428571428571, result["package"]["github.cbhq.net/some_repo/internal/service/service7"])
+				assert.EqualValues(
+					t,
+					0.8571428571428571,
+					result["package"]["github.cbhq.net/some_repo/internal/service/service7"],
+				)
 
 				assert.Contains(t, result["package"], "github.cbhq.net/some_repo/internal/service/service8")
-				assert.EqualValues(t, 0.6166666666666667, result["package"]["github.cbhq.net/some_repo/internal/service/service8"])
+				assert.EqualValues(
+					t,
+					0.6166666666666667,
+					result["package"]["github.cbhq.net/some_repo/internal/service/service8"],
+				)
 
 				assert.Contains(t, result["package"], "github.cbhq.net/some_repo/internal/service/service9")
-				assert.EqualValues(t, 0.8498293515358362, result["package"]["github.cbhq.net/some_repo/internal/service/service9"])
+				assert.EqualValues(
+					t,
+					0.8498293515358362,
+					result["package"]["github.cbhq.net/some_repo/internal/service/service9"],
+				)
 
 				assert.Contains(t, result["package"], "github.cbhq.net/some_repo/internal/service/service10")
-				assert.EqualValues(t, 0.8433734939759037, result["package"]["github.cbhq.net/some_repo/internal/service/service10"])
+				assert.EqualValues(
+					t,
+					0.8433734939759037,
+					result["package"]["github.cbhq.net/some_repo/internal/service/service10"],
+				)
 
 				assert.Contains(t, result["package"], "github.cbhq.net/some_repo/internal/service/service/service11")
-				assert.EqualValues(t, 0.8478260869565217, result["package"]["github.cbhq.net/some_repo/internal/service/service/service11"])
+				assert.EqualValues(
+					t,
+					0.8478260869565217,
+					result["package"]["github.cbhq.net/some_repo/internal/service/service/service11"],
+				)
 
 				assert.Contains(t, result["package"], "github.cbhq.net/some_repo/internal/service/service/service12")
-				assert.EqualValues(t, 0.8367346938775511, result["package"]["github.cbhq.net/some_repo/internal/service/service/service12"])
+				assert.EqualValues(
+					t,
+					0.8367346938775511,
+					result["package"]["github.cbhq.net/some_repo/internal/service/service/service12"],
+				)
 
 				assert.Contains(t, result["package"], "github.cbhq.net/some_repo/internal/service/service/service13")
 				assert.EqualValues(t, 0.859375, result["package"]["github.cbhq.net/some_repo/internal/service/service/service13"])
 
 				assert.Contains(t, result["package"], "github.cbhq.net/some_repo/internal/service/service/service14")
-				assert.EqualValues(t, 0.8481012658227848, result["package"]["github.cbhq.net/some_repo/internal/service/service/service14"])
+				assert.EqualValues(
+					t,
+					0.8481012658227848,
+					result["package"]["github.cbhq.net/some_repo/internal/service/service/service14"],
+				)
 
 				assert.Contains(t, result["package"], "github.cbhq.net/some_repo/internal/service/service/service15")
 				assert.EqualValues(t, 0.84375, result["package"]["github.cbhq.net/some_repo/internal/service/service/service15"])
 
 				assert.Contains(t, result["package"], "github.cbhq.net/some_repo/internal/service/v1/utils")
-				assert.EqualValues(t, 0.9302325581395349, result["package"]["github.cbhq.net/some_repo/internal/service/v1/utils"])
+				assert.EqualValues(
+					t,
+					0.9302325581395349,
+					result["package"]["github.cbhq.net/some_repo/internal/service/v1/utils"],
+				)
 
 				assert.Contains(t, result["package"], "github.cbhq.net/some_repo/lib/admin_flags/pkg/afsdk")
-				assert.EqualValues(t, 0.8571428571428571, result["package"]["github.cbhq.net/some_repo/lib/admin_flags/pkg/afsdk"])
+				assert.EqualValues(
+					t,
+					0.8571428571428571,
+					result["package"]["github.cbhq.net/some_repo/lib/admin_flags/pkg/afsdk"],
+				)
 
 				assert.Contains(t, result["package"], "github.cbhq.net/some_repo/lib/admin_flags/pkg/protogen")
-				assert.EqualValues(t, 0.8367346938775511, result["package"]["github.cbhq.net/some_repo/lib/admin_flags/pkg/protogen"])
+				assert.EqualValues(
+					t,
+					0.8367346938775511,
+					result["package"]["github.cbhq.net/some_repo/lib/admin_flags/pkg/protogen"],
+				)
 
 				assert.Contains(t, result["package"], "github.cbhq.net/some_repo/lib/admin_flags/pkg/validator")
-				assert.EqualValues(t, 0.9705882352941176, result["package"]["github.cbhq.net/some_repo/lib/admin_flags/pkg/validator"])
+				assert.EqualValues(
+					t,
+					0.9705882352941176,
+					result["package"]["github.cbhq.net/some_repo/lib/admin_flags/pkg/validator"],
+				)
 
 				assert.Contains(t, result["file"], "github.cbhq.net/some_repo/internal/cmd/server/server.go")
-				assert.EqualValues(t, 0.22900763358778625, result["file"]["github.cbhq.net/some_repo/internal/cmd/server/server.go"])
+				assert.EqualValues(
+					t,
+					0.22900763358778625,
+					result["file"]["github.cbhq.net/some_repo/internal/cmd/server/server.go"],
+				)
 				assert.Contains(t, result["file"], "github.cbhq.net/some_repo/internal/config/config.go")
 				assert.EqualValues(t, 0.8490566037735849, result["file"]["github.cbhq.net/some_repo/internal/config/config.go"])
 
