@@ -495,3 +495,77 @@ github.com/heynemann/go-cov-parser/gocovparser/core.go:invalid`,
 		})
 	}
 }
+
+func TestCanGetTotalCoverageBreakdown(t *testing.T) {
+	const (
+		expectedTotalCoveredLines      = 112
+		expectedTotalLines             = 134
+		expectedPercentByLines         = 0.835820895522388
+		expectedTotalCoveredStatements = 60
+		expectedTotalStatements        = 68
+		expectedPercentByStatement     = 0.8823529411764706
+	)
+
+	type args struct {
+		coverageData string
+	}
+
+	tests := []struct {
+		name         string
+		args         args
+		expectedErr  error
+		expectedData func(t *testing.T, result gocovparser.OverallCoverageBreakdown)
+	}{
+		{
+			name: "Can parse coverage data by package, file and total",
+			args: args{
+				coverageData: CoverageFixture(t),
+			},
+			expectedErr: nil,
+			expectedData: func(t *testing.T, result gocovparser.OverallCoverageBreakdown) {
+				t.Helper()
+
+				assert.EqualValues(t, expectedTotalCoveredLines, result.TotalCoveredLines)
+				assert.EqualValues(t, expectedTotalLines, result.TotalLines)
+
+				assert.EqualValues(t, expectedTotalCoveredStatements, result.TotalCoveredStatements)
+				assert.EqualValues(t, expectedTotalStatements, result.TotalStatements)
+
+				assert.EqualValues(t, expectedPercentByLines, result.PercentByLines)
+				assert.EqualValues(t, expectedPercentByStatement, result.PercentByStatements)
+			},
+		},
+	}
+
+	for _, testcase := range tests {
+		t.Run(testcase.name, func(t *testing.T) {
+			// ARRANGE
+			items, err := gocovparser.Parse(testcase.args.coverageData)
+			if !assert.NoError(t, err) {
+				return
+			}
+			defer func() {
+				if t.Failed() {
+					t.Logf("items: %#v\n", items)
+				}
+			}()
+
+			// ACT
+			got, err := gocovparser.GetTotalCoverageBreakdown(items)
+
+			// ASSERT
+			if testcase.expectedErr != nil {
+				if assert.Error(t, err) {
+					assert.ErrorIs(t, err, testcase.expectedErr)
+				}
+
+				return
+			}
+
+			if assert.NoError(t, err) {
+				assert.NotNil(t, got)
+				testcase.expectedData(t, got)
+			}
+		})
+	}
+}

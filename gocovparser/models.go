@@ -14,6 +14,17 @@ type ParseGroup struct {
 // ParseGroupResult represents results of a Group Coverage operation.
 type ParseGroupResult map[string]map[string]float64
 
+// OverallCoverageBreakdown is an overall summary of code coverage.
+type OverallCoverageBreakdown struct {
+	TotalCoveredLines int
+	TotalLines        int
+	PercentByLines    float64
+
+	TotalCoveredStatements int
+	TotalStatements        int
+	PercentByStatements    float64
+}
+
 // Filter interface for filtering coverage by.
 type Filter interface {
 	FilterCoverage(Coverage) bool

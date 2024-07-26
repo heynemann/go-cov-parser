@@ -110,3 +110,45 @@ func GroupCoverage(items []Coverage, groups ...ParseGroup) (ParseGroupResult, er
 
 	return result, nil
 }
+
+// Calculate the total coverage breakdown by lines and by statements.
+func GetTotalCoverageBreakdown(items []Coverage) (OverallCoverageBreakdown, error) {
+	result := OverallCoverageBreakdown{
+		TotalCoveredLines:      0,
+		TotalLines:             0,
+		PercentByLines:         0.0,
+		TotalCoveredStatements: 0,
+		TotalStatements:        0,
+		PercentByStatements:    0.0,
+	}
+
+	for _, cov := range items {
+		for _, b := range cov.Blocks {
+			// Increment lines
+			linesInBlock := b.EndLine - b.StartLine + 1
+			result.TotalLines += linesInBlock
+
+			if b.Count > 0 { // is covered
+				result.TotalCoveredLines += linesInBlock
+			}
+
+			// Increment statements
+			result.TotalStatements += b.NumStmt
+
+			if b.Count > 0 { // is covered
+				result.TotalCoveredStatements += b.NumStmt
+			}
+		}
+	}
+
+	// Final pecentages
+	if result.TotalLines != 0 {
+		result.PercentByLines = float64(result.TotalCoveredLines) / float64(result.TotalLines)
+	}
+
+	if result.TotalStatements != 0 {
+		result.PercentByStatements = float64(result.TotalCoveredStatements) / float64(result.TotalStatements)
+	}
+
+	return result, nil
+}
