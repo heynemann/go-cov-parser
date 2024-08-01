@@ -30,7 +30,7 @@ type Coverage struct {
 	Path  string
 }
 
-type ParseGroupRawResult map[string]map[string]RawCoverage
+type ParseGroupRawResult map[string]map[string]*RawCoverage
 
 // RawCoverage is an overall summary of code coverage.
 type RawCoverage struct {

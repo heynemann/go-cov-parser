@@ -64,74 +64,54 @@ func Parse(coverageData string) ([]Coverage, error) {
 
 // GroupCoverage in the specified groups.
 func GroupCoverage(items []Coverage, groups ...ParseGroup) (ParseGroupResult, error) {
+	rawCov, err := GroupCoverageRaw(items, groups...)
+	if err != nil {
+		return nil, err
+	}
+
 	result := make(map[string]map[string]float64)
 
-	statements := make(map[string]map[string]int)
-	covered := make(map[string]map[string]int)
-
-	for _, group := range groups {
-		if _, found := result[group.Name]; !found {
-			result[group.Name] = make(map[string]float64)
+	for group, values := range rawCov {
+		if _, found := result[group]; !found {
+			result[group] = make(map[string]float64)
 		}
 
-		if _, found := statements[group.Name]; !found {
-			statements[group.Name] = make(map[string]int)
-		}
-
-		if _, found := covered[group.Name]; !found {
-			covered[group.Name] = make(map[string]int)
-		}
-
-		for _, cov := range items {
-			key := group.KeyFunc(cov.FileName)
-
-			for _, b := range cov.Blocks {
-				statements[group.Name][key] += b.NumStmt
-
-				if b.Count > 0 { // is covered
-					covered[group.Name][key] += b.NumStmt
-				}
+		for key, raw := range values {
+			if raw.NumStatements == 0 {
+				result[group][key] = 0.0
+			} else {
+				result[group][key] = float64(raw.CoveredStatements) / float64(raw.NumStatements)
 			}
-		}
-
-		for key := range statements[group.Name] {
-			stmts := statements[group.Name][key]
-			cov := covered[group.Name][key]
-
-			if stmts == 0 {
-				result[group.Name][key] = 0.0
-
-				continue
-			}
-
-			result[group.Name][key] = float64(cov) / float64(stmts)
 		}
 	}
 
 	return result, nil
 }
 
+// GroupCoverageRaw reports raw lines and statements instead of percentages
 func GroupCoverageRaw(items []Coverage, groups ...ParseGroup) (ParseGroupRawResult, error) {
-	result := make(map[string]map[string]RawCoverage)
+	result := make(map[string]map[string]*RawCoverage)
 
 	for _, group := range groups {
 		if _, found := result[group.Name]; !found {
-			result[group.Name] = make(map[string]RawCoverage)
+			result[group.Name] = make(map[string]*RawCoverage)
 		}
 
 		for _, cov := range items {
 			key := group.KeyFunc(cov.FileName)
+			if _, found := result[group.Name][key]; !found {
+				result[group.Name][key] = &RawCoverage{}
+			}
 
 			for _, b := range cov.Blocks {
 				nlines := b.EndLine - b.StartLine
 
-				res := result[group.Name][key]
-				res.NumLines += nlines
-				res.NumStatements += b.NumStmt
+				result[group.Name][key].NumLines += nlines
+				result[group.Name][key].NumStatements += b.NumStmt
 
 				if b.Count > 0 { // Count is the number of times that block was covered
-					res.CoveredLines += nlines
-					res.CoveredStatements += b.NumStmt
+					result[group.Name][key].CoveredLines += nlines
+					result[group.Name][key].CoveredStatements += b.NumStmt
 				}
 			}
 		}
