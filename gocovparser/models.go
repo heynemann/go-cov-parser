@@ -29,3 +29,13 @@ type Coverage struct {
 	Repo  string
 	Path  string
 }
+
+type ParseGroupRawResult map[string]map[string]RawCoverage
+
+// RawCoverage is an overall summary of code coverage.
+type RawCoverage struct {
+	NumLines          int
+	CoveredLines      int
+	NumStatements     int
+	CoveredStatements int
+}

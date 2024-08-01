@@ -110,3 +110,32 @@ func GroupCoverage(items []Coverage, groups ...ParseGroup) (ParseGroupResult, er
 
 	return result, nil
 }
+
+func GroupCoverageRaw(items []Coverage, groups ...ParseGroup) (ParseGroupRawResult, error) {
+	result := make(map[string]map[string]RawCoverage)
+
+	for _, group := range groups {
+		if _, found := result[group.Name]; !found {
+			result[group.Name] = make(map[string]RawCoverage)
+		}
+
+		for _, cov := range items {
+			key := group.KeyFunc(cov.FileName)
+
+			for _, b := range cov.Blocks {
+				nlines := b.EndLine - b.StartLine
+
+				res := result[group.Name][key]
+				res.NumLines += nlines
+				res.NumStatements += b.NumStmt
+
+				if b.Count > 0 { // Count is the number of times that block was covered
+					res.CoveredLines += nlines
+					res.CoveredStatements += b.NumStmt
+				}
+			}
+		}
+	}
+
+	return result, nil
+}
